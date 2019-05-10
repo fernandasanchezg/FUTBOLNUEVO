@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Ligas de futbol</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+        integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <h1 class="text-center">Jugadores</h1>
+
+
+    <div id="appPlayers" class="col-md-12">
+
+        <form class="form-group">
+            <label class="input-group">
+                
+                <input class="form-control col-md-6" v-model="nombreJugador" placeholder="Nombre jugador">
+                <input class="form-control col-md-6" v-model="edadJugador" placeholder="Edad jugador">
+                <input class="form-control col-md-6" v-model="equipoJugador" placeholder="Equipo jugador">
+                <input class="form-control col-md-6" v-model="golesJugador" placeholder="Goles jugador">
+                <input class="form-control col-md-6" v-model="posicionJugador" placeholder="Posicion jugador">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-success btn-lg" type="submit" @click="crearJugador">Crear</button>
+                </div>
+            </label>
+            <label class="input-group">
+                <input class="form-control col-md-4" v-model="jugador_id" placeholder="Id jugador">
+                <input class="form-control col-md-6" v-model="nombreJugador" placeholder="Nombre jugador">
+                <input class="form-control col-md-4" v-model="edadJugador" placeholder="Edad jugador">
+                <input class="form-control col-md-4" v-model="equipoJugador" placeholder="Equipo jugador">
+                <input class="form-control col-md-4" v-model="golesJugador" placeholder="Goles jugador">
+                <input class="form-control col-md-4" v-model="posicionJugador" placeholder="Posicion jugador">
+          
+                <div class="input-group-append">
+                    <button class="btn btn-outline-info btn-lg" @click="actualizarJugador(jugador_id)">Actualizar</button>
+                </div>
+            </label>
+            <label class="input-group">
+                <input class="form-control col-md-12" v-model="jugador_id" placeholder="Id jugador">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-danger btn-lg" @click="eliminarJugador(jugador_id)">Eliminar</button>
+                </div>
+            </label>
+        </form>
+
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>EDAD</th>
+                    <th>EQUIPO</th>
+                    <th>GOLES</th>
+                    <th>Posicion</th>
+                </tr>
+            </thead>
+            <tbody >
+                <tr v-for="jugador in Jugadores">
+                 
+                    <td>{{jugador._id}}</td>
+                    <td>{{jugador.nombrejugador}} </td>
+                    <td>{{jugador.edadjugador}} </td>
+                    <td>{{jugador.equipojugador}} </td>
+                    <td>{{jugador.golesjugador}} </td>
+                    <td>{{jugador.posicionjugador}} </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+<script>
+    const api = 'http://localhost:3000/api/jugador/'
+
+    new Vue({
+        el: "#appPlayers",
+        data() {
+            return {
+                jugador_id: '',
+                nombreJugador: '',
+                edadJugador: '',
+                equipoJugador: '',
+                golesJugador: '',
+                posicionJugador:'',
+                Jugadores: []
+            }
+        },
+        beforeMount() {
+            this.verJugadores()
+        },
+        methods: {
+            verJugadores() {
+                let self = this
+                axios.get(api).then(function (res) {
+                   
+                    self.Jugadores = JSON.parse(JSON.stringify(res.data))
+                    //alert(JSON.stringify(Ligas))
+                     console.log(self.Jugadores)
+                    
+                }).catch(function (err) {
+                    console.log(err)
+                })
+            },
+            crearJugador() {
+                axios.post(api, {
+                    nombrejugador: this.nombreJugador,
+                    edadjugador: this.edadJugador,
+                    equipojugador: this.equipoJugador,
+                    golesjugador: this.golesJugador,
+                    posicionjugador: this.posicionJugador
+                }).then(function (res) {
+                    this.Equipos = res.data
+                }).catch(function (err) {
+                    console.log(err)
+                })
+            },
+            eliminarJugador(jugador_id) {
+                axios.delete(api + jugador_id, {
+                    _id: this.jugador_id,
+                    nombrejugador: this.nombreJugador,
+                    edadjugador: this.edadJugador,
+                    equipojugador: this.equipoJugador,
+                    golesjugador: this.golesJugador,
+                    posicionjugador: this.posicionJugador
+                }).then(function (res) {
+                    console.log(res)
+                }).catch(function (err) {
+                    console.log(err)
+                })
+            },
+            actualizarJugador(jugador_id) {
+                axios.put(api + jugador_id, {
+                    _id: this.jugador_id,
+                    nombrejugador: this.nombreJugador,
+                    edadjugador: this.edadJugador,
+                    equipojugador: this.equipoJugador,
+                    golesjugador: this.golesJugador,
+                    posicionjugador: this.posicionJugador
+                }).then(function (res) {
+                    console.log(res)
+                }).catch(function (err) {
+                    console.log(err)
+                })
+            }
+        }
+    })
+
+</script>
+
+<h1 class="text-center">Equipos</h1>
+<div id="appEquipos" class="col-md-12">
+
+    <form class="form-group">
+        <label class="input-group">
+            <input class="form-control col-md-6" v-model="nombreEquipo" placeholder="Nombre equipo">
+            <input class="form-control col-md-6" v-model="paisEquipo" placeholder="Pais equipo">
+            <input class="form-control col-md-6" v-model="nombreTecnico" placeholder="Nombre tecnico">
+            <div class="input-group-append">
+                <button class="btn btn-outline-success btn-lg" type="submit" @click="crearEquipo">Crear</button>
+            </div>
+        </label>
+        <label class="input-group">
+            <input class="form-control col-md-4" v-model="equipo_id" placeholder="Id equipo">
+            <input class="form-control col-md-4" v-model="nombreEquipo" placeholder="Nombre equipo">
+            <input class="form-control col-md-4" v-model="paisEquipo" placeholder="Pais equipo">
+            <input class="form-control col-md-4" v-model="nombreTecnico" placeholder="Nombre tecnico">
+            <div class="input-group-append">
+                <button class="btn btn-outline-info btn-lg" @click="actualizarEquipo(equipo_id)">Actualizar</button>
+            </div>
+        </label>
+        <label class="input-group">
+            <input class="form-control col-md-12" v-model="equipo_id" placeholder="Id equipo">
+            <div class="input-group-append">
+                <button class="btn btn-outline-danger btn-lg" @click="eliminarEquipo(equipo_id)">Eliminar</button>
+            </div>
+        </label>
+    </form>
+
+    <table class="table table-hover table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>País</th>
+                <th>Técnico</th>
+            </tr>
+        </thead>
+        <tbody >
+            <tr v-for="equipo in Equipos">
+                <td>{{equipo._id}}</td>
+                <td>{{equipo.nombreequipo}} </td>
+                <td>{{equipo.paisequipo}} </td>
+                <td>{{equipo.nombretecnico}} </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+
+<script>
+const api = 'http://localhost:3000/api/equipo/'
+
+new Vue({
+    el: "#appEquipos",
+    data() {
+        return {
+            equipo_id: '',
+            nombreEquipo: '',
+            paisEquipo: '',
+            nombreTecnico: '',
+            Equipos: []
+        }
+    },
+    beforeMount() {
+        this.verEquipos()
+    },
+    methods: {
+        verEquipos() {
+            let self = this
+            axios.get(api).then(function (res) {
+                self.Equipos = JSON.parse(JSON.stringify(res.data))
+                console.log(self.Equipos)
+                //alert(JSON.stringify(Ligas))
+            }).catch(function (err) {
+                console.log(err)
+            })
+        },
+        crearEquipo() {
+            axios.post(api, {
+                nombreequipo: this.nombreEquipo,
+                paisequipo: this.paisEquipo,
+                nombretecnico:this.nombreTecnico
+            }).then(function (res) {
+                this.Equipos = res.data
+            }).catch(function (err) {
+                console.log(err)
+            })
+        },
+        eliminarEquipo(equipo_id) {
+            axios.delete(api + equipo_id, {
+                _id: this.equipo_id,
+                nombreequipo: this.nombreEquipo,
+                paisequipo: this.paisEquipo,
+                nombretecnico:this.nombreTecnico
+            }).then(function (res) {
+                console.log(res)
+            }).catch(function (err) {
+                console.log(err)
+            })
+        },
+        actualizarEquipo(equipo_id) {
+            axios.put(api + equipo_id, {
+                _id: this.equipo_id,
+                nombreequipo: this.nombreEquipo,
+                paisequipo: this.paisEquipo,
+                nombretecnico:this.nombreTecnico
+            }).then(function (res) {
+                console.log(res)
+            }).catch(function (err) {
+                console.log(err)
+            })
+        }
+    }
+})
+
+</script>
+   <h1 class="text-center">Ligas</h1>
+ <div id="appLigas" class="col-md-12">
+
+    <form class="form-group">
+        <label class="input-group">
+            <input class="form-control col-md-6" v-model="nombreLiga" placeholder="Nombre liga">
+            <input class="form-control col-md-6" v-model="paisLiga" placeholder="Pais liga">
+            <div class="input-group-append">
+                <button class="btn btn-outline-success btn-lg" type="submit" @click="crearLiga">Crear</button>
+            </div>
+        </label>
+        <label class="input-group">
+            <input class="form-control col-md-4" v-model="liga_id" placeholder="Id liga">
+            <input class="form-control col-md-4" v-model="nombreLiga" placeholder="Nombre liga">
+            <input class="form-control col-md-4" v-model="paisLiga" placeholder="Pais liga">
+            <div class="input-group-append">
+                <button class="btn btn-outline-info btn-lg" @click="actualizarLiga(liga_id)">Actualizar</button>
+            </div>
+        </label>
+        <label class="input-group">
+            <input class="form-control col-md-12" v-model="liga_id" placeholder="Id liga">
+            <div class="input-group-append">
+                <button class="btn btn-outline-danger btn-lg" @click="eliminarLiga(liga_id)">Eliminar</button>
+            </div>
+        </label>
+    </form>
+
+    <table class="table table-hover table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>País</th>
+            </tr>
+        </thead>
+        <tbody >
+            <tr v-for="liga in ligas">
+                <td>{{liga._id}}</td>
+                <td>{{liga.nombre}} </td>
+                <td>{{liga.pais}} </td>                    
+            </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+
+<script>
+const api = 'http://localhost:3000/api/liga/'
+
+new Vue({
+    el: "#appLigas",
+    data() {
+        return {
+            liga_id: '',
+            nombreLiga: '',
+            paisLiga: '',
+            ligas: []
+        }
+        
+    },
+    beforeMount() {
+        this.verLigas()
+    },
+    methods: {
+        verLigas() {
+            let self = this
+            axios.get(api).then(function (res) {
+                self.ligas = JSON.parse(JSON.stringify(res.data))
+                console.log(self.ligas)
+                
+                
+            }).catch(function (err) {
+                console.log(err)
+            })
+        },
+        crearLiga() {
+            axios.post(api, {
+                nombre: this.nombreLiga,
+                pais: this.paisLiga
+            }).then(function (res) {
+                this.Ligas = res.data
+            }).catch(function (err) {
+                console.log(err)
+            })
+        },
+        eliminarLiga(liga_id) {
+            axios.delete(api + liga_id, {
+                _id: this.liga_id,
+                nombre: this.nombreLiga,
+                pais: this.paisLiga
+            }).then(function (res) {
+                console.log(res)
+            }).catch(function (err) {
+                console.log(err)
+            })
+        },
+        actualizarLiga(liga_id) {
+            axios.put(api + liga_id, {
+                _id: this.liga_id,
+                nombre: this.nombreLiga,
+                pais: this.paisLiga
+            }).then(function (res) {
+                console.log(res)
+            }).catch(function (err) {
+                console.log(err)
+            })
+        }
+    }
+})
+
+</script>
+</html>
+
+</html>
